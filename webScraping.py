@@ -32,5 +32,5 @@ for i in names[:92]:
     file.close()
     
     count +=1
-    print(count)
+    print(count+name)
 print('Be Fun :)')
