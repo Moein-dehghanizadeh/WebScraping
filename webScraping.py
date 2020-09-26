@@ -3,34 +3,24 @@ from re import sub
 import requests as req
 from bs4 import BeautifulSoup
 import re
-#import os 
-main = req.get("https://www.lioncomputer.com/computer/computer-components/processor.html?product_list_limit=92")
-main = BeautifulSoup(main.text,'html.parser')
+from statistics import mean
+def get_site(link):
+    site = req.get(link)
+    site = BeautifulSoup(site.text,'html.parser')
+    return site
+def re_sub(string):
+    string = re.sub(r'[\n,\t]','',string.strip())
+    return string
+main = get_site("https://www.lioncomputer.com/computer/computer-components/processor.html?product_list_limit=92")
 names = main.find_all('a',attrs={'class':'product-item-link'})
+prices = main.find_all('span',attrs={'class':'price'})
 count = 0
+for i in range(0,92):
+    name = names[i].text
+    price = int(re.sub(r'["تومان",","]','',prices[i].text.strip()))/1000000
+    print(name,price)
 
-for i in names[:92]:
-    name = re.sub(r'[\n,\t]','',i.text.strip())
-    
-    link = req.get(i.get('href'))
-    link = BeautifulSoup(link.text,'html.parser')
-    c1  = link.find_all('th',attrs={'class':'col label'})
-    c2  = link.find_all('td',attrs={'class':'col data'})
-    cc1 = []
-    cc2 = []
-    for label in c1:
-        cc1.append(label.text) 
-    for data in c2:
-        cc2 .append(data.text)
-    xx= ''
-    for l in range(0,len(cc1)):
-        file = open(f'./cpu/{name}.text','w')
-        
-        w = f'{cc1[l]}\t{cc2[l]}\n'
-        xx =xx+w
-    file.write(xx)
-    file.close()
-    
-    count +=1
-    print(count+name)
-print('Be Fun :)')
+print()
+print('-----------------------')
+print()
+print('Be Fun :-)')
